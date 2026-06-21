@@ -1,0 +1,33 @@
+/*===-- include/llvm-c/DataTypes.h - Define fixed size types ------*- C -*-===*\
+|*                                                                            *|
+|* Part of the LLVM Project, under the Apache License v2.0 with LLVM          *|
+|* Exceptions.                                                                *|
+|* See https://llvm.org/LICENSE.txt for license information.                  *|
+|* SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception                    *|
+|*                                                                            *|
+|*===----------------------------------------------------------------------===*|
+|*                                                                            *|
+|* This file contains definitions to figure out the size of _HOST_ data types.*|
+|* This file is important because different host OS's define different macros,*|
+|* which makes portability tough.  This file exports the following            *|
+|* definitions:                                                               *|
+|*                                                                            *|
+|*   [u]int(32|64)_t : typedefs for signed and unsigned 32/64 bit system types*|
+|*   [U]INT(8|16|32|64)_(MIN|MAX) : Constants for the min and max values.     *|
+|*                                                                            *|
+|* No library is required when using these functions.                         *|
+|*                                                                            *|
+|*===----------------------------------------------------------------------===*/
+
+/* Please leave this file C-compatible. */
+package llvm
+
+when ODIN_OS == .Windows {
+    foreign import lib "system:LLVM-C.lib"
+} else when ODIN_OS == .Linux {
+    foreign import lib "system:LLVM"
+} else when ODIN_OS == .Darwin {
+    foreign import lib "system:libLLVM-C.dylib"
+}
+
+
