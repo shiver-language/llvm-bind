@@ -1,7 +1,9 @@
 # LLVM Bindings
 
-LLVM-C Bindings for version `21.1.8`. Supports Windows and Linux. Darwin is not supported as the developers does not own
+LLVM-C bindings for LLVM `21.x`. Supports Windows and Linux. Darwin is not supported as the developers does not own
 Apple devices.
+
+Tested on LLVM `21.1.8`.
 
 ## Linux Special Instructions
 
