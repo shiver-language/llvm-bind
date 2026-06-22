@@ -15,13 +15,7 @@ package llvm
 
 import "core:c"
 
-when ODIN_OS == .Windows {
-    foreign import lib "system:LLVM-C.lib"
-} else when ODIN_OS == .Linux {
-    foreign import lib "system:LLVM"
-} else when ODIN_OS == .Darwin {
-    foreign import lib "system:libLLVM-C.dylib"
-}
+foreign import lib "system:LLVM"
 
 
 @(default_calling_convention="c", link_prefix="LLVM")

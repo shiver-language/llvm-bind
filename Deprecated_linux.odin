@@ -1,4 +1,4 @@
-/*===-- llvm-c/Visibility.h - Visibility macros for llvm-c ------*- C++ -*-===*\
+/*===-- llvm-c/Deprecated.h - Deprecation macro -------------------*- C -*-===*\
 |*                                                                            *|
 |* Part of the LLVM Project, under the Apache License v2.0 with LLVM          *|
 |* Exceptions.                                                                *|
@@ -7,19 +7,12 @@
 |*                                                                            *|
 |*===----------------------------------------------------------------------===*|
 |*                                                                            *|
-|* This header defines visibility macros used for the LLVM C interface. These *|
-|* macros are used to annotate C functions that should be exported as part of *|
-|* a shared library or DLL.                                                   *|
+|* This header declares LLVM_ATTRIBUTE_C_DEPRECATED() macro, which can be     *|
+|* used to deprecate functions in the C interface.                            *|
 |*                                                                            *|
 \*===----------------------------------------------------------------------===*/
 package llvm
 
-when ODIN_OS == .Windows {
-    foreign import lib "system:LLVM-C.lib"
-} else when ODIN_OS == .Linux {
-    foreign import lib "system:LLVM"
-} else when ODIN_OS == .Darwin {
-    foreign import lib "system:libLLVM-C.dylib"
-}
+foreign import lib "system:LLVM"
 
 

@@ -17,13 +17,7 @@ package llvm
 import "core:c"
 import "core:sys/posix"
 
-when ODIN_OS == .Windows {
-    foreign import lib "system:LLVM-C.lib"
-} else when ODIN_OS == .Linux {
-    foreign import lib "system:LLVM"
-} else when ODIN_OS == .Darwin {
-    foreign import lib "system:libLLVM-C.dylib"
-}
+foreign import lib "system:LLVM"
 
 
 lto_bool_t :: bool

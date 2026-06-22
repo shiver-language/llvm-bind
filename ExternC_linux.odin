@@ -1,4 +1,4 @@
-/*===-- llvm-c/Deprecated.h - Deprecation macro -------------------*- C -*-===*\
+/*===- llvm-c/ExternC.h - Wrapper for 'extern "C"' ----------------*- C -*-===*\
 |*                                                                            *|
 |* Part of the LLVM Project, under the Apache License v2.0 with LLVM          *|
 |* Exceptions.                                                                *|
@@ -7,18 +7,11 @@
 |*                                                                            *|
 |*===----------------------------------------------------------------------===*|
 |*                                                                            *|
-|* This header declares LLVM_ATTRIBUTE_C_DEPRECATED() macro, which can be     *|
-|* used to deprecate functions in the C interface.                            *|
+|* This file defines an 'extern "C"' wrapper                                  *|
 |*                                                                            *|
 \*===----------------------------------------------------------------------===*/
 package llvm
 
-when ODIN_OS == .Windows {
-    foreign import lib "system:LLVM-C.lib"
-} else when ODIN_OS == .Linux {
-    foreign import lib "system:LLVM"
-} else when ODIN_OS == .Darwin {
-    foreign import lib "system:libLLVM-C.dylib"
-}
+foreign import lib "system:LLVM"
 
 
