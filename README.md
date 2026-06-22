@@ -3,6 +3,15 @@
 LLVM-C Bindings for version `21.1.8`. Supports Windows and Linux. Darwin is not supported as the developers does not own
 Apple devices.
 
+## Linux Special Instructions
+
+If you use these bindings on Linux, remember to pass in `-extra-linker-flags`. In my device 
+(Gentoo Linux), the command looks like so:
+```bash
+# change the path depending on the location of your LLVM installation
+odin build . -extra-linker-flags="-L/usr/lib/llvm/21/lib64"
+```
+
 ## Windows Special Instructions
 
 You may notice for Windows files we import the library like so:
