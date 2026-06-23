@@ -48,6 +48,7 @@ BinaryType :: enum u32 {
 	MachO64B             = 13, /**< MachO 64-bit, big endian. */
 	Wasm                 = 14, /**< Web Assembly. */
 	Offload              = 15, /**< Offloading fatbinary. */
+	DXcontainer          = 16, /**< DirectX Binary Container. */
 }
 
 @(default_calling_convention="c", link_prefix="LLVM")
@@ -59,7 +60,7 @@ foreign lib {
 	* appropriate implementation selected.  The context may be NULL except if
 	* the resulting file is an LLVM IR file.
 	*
-	* The memory buffer is not consumed by this function.  It is the responsibilty
+	* The memory buffer is not consumed by this function. It is the responsibility
 	* of the caller to free it with \c LLVMDisposeMemoryBuffer.
 	*
 	* If NULL is returned, the \p ErrorMessage parameter is populated with the
@@ -73,7 +74,7 @@ foreign lib {
 	/**
 	* Dispose of a binary file.
 	*
-	* The binary file does not own its backing buffer.  It is the responsibilty
+	* The binary file does not own its backing buffer. It is the responsibility
 	* of the caller to free it with \c LLVMDisposeMemoryBuffer.
 	*/
 	DisposeBinary :: proc(BR: BinaryRef) ---

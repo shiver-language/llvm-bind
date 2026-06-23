@@ -74,6 +74,7 @@ Opcode :: enum u32 {
 	FPTrunc        = 37,
 	FPExt          = 38,
 	PtrToInt       = 39,
+	PtrToAddr      = 69,
 	IntToPtr       = 40,
 	BitCast        = 41,
 	AddrSpaceCast  = 60,
@@ -478,6 +479,13 @@ LLVMGEPFlagNUW      :: 4
 * See https://llvm.org/docs/LangRef.html#getelementptr-instruction
 */
 GEPNoWrapFlags :: u32
+
+DbgRecordKind :: enum u32 {
+	Label   = 0,
+	Declare = 1,
+	Value   = 2,
+	Assign  = 3,
+}
 
 @(default_calling_convention="c", link_prefix="LLVM")
 foreign lib {
@@ -1078,6 +1086,19 @@ foreign lib {
 	* @see llvm::Function::Create()
 	*/
 	AddFunction :: proc(M: ModuleRef, Name: cstring, FunctionTy: TypeRef) -> ValueRef ---
+
+	/**
+	* Obtain or insert a function into a module.
+	*
+	* If a function with the specified name already exists in the module, it
+	* is returned. Otherwise, a new function is created in the module with the
+	* specified name and type and is returned.
+	*
+	* The returned value corresponds to a llvm::Function instance.
+	*
+	* @see llvm::Module::getOrInsertFunction()
+	*/
+	GetOrInsertFunction :: proc(M: ModuleRef, Name: cstring, NameLen: c.size_t, FunctionTy: TypeRef) -> ValueRef ---
 
 	/**
 	* Obtain a Function value from a Module by its name.
@@ -1937,6 +1958,13 @@ foreign lib {
 	ConstRealOfStringAndSize :: proc(RealTy: TypeRef, Text: cstring, SLen: u32) -> ValueRef ---
 
 	/**
+	* Obtain a constant for a floating point value from array of 64 bit values.
+	* The length of the array N must be ceildiv(bits, 64), where bits is the
+	* scalar size in bits of the floating-point type.
+	*/
+	ConstFPFromBits :: proc(Ty: TypeRef, N: [^]u64) -> ValueRef ---
+
+	/**
 	* Obtain the zero extended value for an integer constant value.
 	*
 	* @see llvm::ConstantInt::getZExtValue()
@@ -2218,6 +2246,13 @@ foreign lib {
 	GlobalSetMetadata :: proc(Global: ValueRef, Kind: u32, MD: MetadataRef) ---
 
 	/**
+	* Adds a metadata attachment.
+	*
+	* @see llvm::GlobalObject::addMetadata()
+	*/
+	GlobalAddMetadata :: proc(Global: ValueRef, Kind: u32, MD: MetadataRef) ---
+
+	/**
 	* Erases a metadata attachment of the given kind if it exists.
 	*
 	* @see llvm::GlobalObject::eraseMetadata()
@@ -2230,6 +2265,13 @@ foreign lib {
 	* @see llvm::GlobalObject::clearMetadata()
 	*/
 	GlobalClearMetadata :: proc(Global: ValueRef) ---
+
+	/**
+	* Add debuginfo metadata to this global.
+	*
+	* @see llvm::GlobalVariable::addDebugInfo()
+	*/
+	GlobalAddDebugInfo :: proc(Global: ValueRef, GVE: MetadataRef) ---
 
 	/**
 	* Retrieves an array of metadata entries representing the metadata attached to
@@ -3173,6 +3215,35 @@ foreign lib {
 	GetPreviousDbgRecord :: proc(DbgRecord: DbgRecordRef) -> DbgRecordRef ---
 
 	/**
+	* Get the debug location attached to the debug record.
+	*
+	* @see llvm::DbgRecord::getDebugLoc()
+	*/
+	DbgRecordGetDebugLoc :: proc(Rec: DbgRecordRef) -> MetadataRef ---
+	DbgRecordGetKind     :: proc(Rec: DbgRecordRef) -> DbgRecordKind ---
+
+	/**
+	* Get the value of the DbgVariableRecord.
+	*
+	* @see llvm::DbgVariableRecord::getValue()
+	*/
+	DbgVariableRecordGetValue :: proc(Rec: DbgRecordRef, OpIdx: u32) -> ValueRef ---
+
+	/**
+	* Get the debug info variable of the DbgVariableRecord.
+	*
+	* @see llvm::DbgVariableRecord::getVariable()
+	*/
+	DbgVariableRecordGetVariable :: proc(Rec: DbgRecordRef) -> MetadataRef ---
+
+	/**
+	* Get the debug info expression of the DbgVariableRecord.
+	*
+	* @see llvm::DbgVariableRecord::getExpression()
+	*/
+	DbgVariableRecordGetExpression :: proc(Rec: DbgRecordRef) -> MetadataRef ---
+
+	/**
 	* Obtain the argument count for a call instruction.
 	*
 	* This expects an LLVMValueRef that corresponds to a llvm::CallInst,
@@ -3400,6 +3471,28 @@ foreign lib {
 	* @see llvm::SwitchInst::getDefaultDest()
 	*/
 	GetSwitchDefaultDest :: proc(SwitchInstr: ValueRef) -> BasicBlockRef ---
+
+	/**
+	* Obtain the case value for a successor of a switch instruction. i corresponds
+	* to the successor index. The first successor is the default destination, so i
+	* must be greater than zero.
+	*
+	* This only works on llvm::SwitchInst instructions.
+	*
+	* @see llvm::SwitchInst::CaseHandle::getCaseValue()
+	*/
+	GetSwitchCaseValue :: proc(SwitchInstr: ValueRef, i: u32) -> ValueRef ---
+
+	/**
+	* Set the case value for a successor of a switch instruction. i corresponds to
+	* the successor index. The first successor is the default destination, so i
+	* must be greater than zero.
+	*
+	* This only works on llvm::SwitchInst instructions.
+	*
+	* @see llvm::SwitchInst::CaseHandle::setValue()
+	*/
+	SetSwitchCaseValue :: proc(SwitchInstr: ValueRef, i: u32, CaseValue: ValueRef) ---
 
 	/**
 	* Obtain the type that is being allocated by the alloca instruction.
@@ -3799,7 +3892,7 @@ foreign lib {
 	* Deprecated: Use LLVMBuildGlobalString instead, which has identical behavior.
 	*/
 	BuildGlobalStringPtr :: proc(B: BuilderRef, Str: cstring, Name: cstring) -> ValueRef ---
-	GetVolatile          :: proc(MemoryAccessInst: ValueRef) -> Bool ---
+	GetVolatile          :: proc(Inst: ValueRef) -> Bool ---
 	SetVolatile          :: proc(MemoryAccessInst: ValueRef, IsVolatile: Bool) ---
 	GetWeak              :: proc(CmpXchgInst: ValueRef) -> Bool ---
 	SetWeak              :: proc(CmpXchgInst: ValueRef, IsWeak: Bool) ---

@@ -31,7 +31,7 @@ foreign import lib "system:LLVM"
 foreign lib {
 	/**
 	* Install the plugin that submits debug objects to the executor. Executors must
-	* expose the llvm_orc_registerJITLoaderGDBWrapper symbol.
+	* expose the llvm_orc_registerJITLoaderGDBAllocAction symbol.
 	*/
 	OrcLLJITEnableDebugSupport :: proc(J: OrcLLJITRef) -> ErrorRef ---
 }

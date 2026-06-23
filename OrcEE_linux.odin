@@ -31,10 +31,23 @@ MemoryManagerNotifyTerminatingCallback :: proc "c" (CtxCtx: rawptr)
 @(default_calling_convention="c", link_prefix="LLVM")
 foreign lib {
 	/**
+	* Create a ObjectLinkingLayer instance using the standard JITLink
+	* InProcessMemoryManager for memory management.
+	*/
+	OrcCreateObjectLinkingLayerWithInProcessMemoryManager :: proc(Result: ^OrcObjectLayerRef, ES: OrcExecutionSessionRef) -> ErrorRef ---
+
+	/**
 	* Create a RTDyldObjectLinkingLayer instance using the standard
 	* SectionMemoryManager for memory management.
 	*/
 	OrcCreateRTDyldObjectLinkingLayerWithSectionMemoryManager :: proc(ES: OrcExecutionSessionRef) -> OrcObjectLayerRef ---
+
+	/**
+	* Create a RTDyldObjectLinkingLayer instance using the standard
+	* SectionMemoryManager for memory management. If ReserveAlloc is true then
+	* a contiguous range of memory will be reserved for each object file.
+	*/
+	OrcCreateRTDyldObjectLinkingLayerWithSectionMemoryManagerReserveAlloc :: proc(ES: OrcExecutionSessionRef, ReserveAlloc: Bool) -> OrcObjectLayerRef ---
 
 	/**
 	* Create a RTDyldObjectLinkingLayer instance using MCJIT-memory-manager-like

@@ -188,6 +188,26 @@ LLVMDIFixedPointTypeMetadataKind             :: 37
 MetadataKind :: u32
 
 /**
+* The kind of checksum to emit.
+*/
+ChecksumKind :: enum u32 {
+	/**
+	* The kind of checksum to emit.
+	*/
+	MD5    = 0,
+
+	/**
+	* The kind of checksum to emit.
+	*/
+	SHA1   = 1,
+
+	/**
+	* The kind of checksum to emit.
+	*/
+	SHA256 = 2,
+}
+
+/**
 * An LLVM DWARF type encoding.
 */
 DWARFTypeEncoding :: u32
@@ -298,6 +318,21 @@ foreign lib {
 	* \param DirectoryLen The length of the C string passed to \c Directory.
 	*/
 	DIBuilderCreateFile :: proc(Builder: DIBuilderRef, Filename: cstring, FilenameLen: c.size_t, Directory: cstring, DirectoryLen: c.size_t) -> MetadataRef ---
+
+	/**
+	* Create a file descriptor to hold debugging information for a file.
+	* \param Builder      The \c DIBuilder.
+	* \param Filename     File name.
+	* \param FilenameLen  The length of the C string passed to \c Filename.
+	* \param Directory    Directory.
+	* \param DirectoryLen The length of the C string passed to \c Directory.
+	* \param ChecksumKind The kind of checksum. eg MD5, SHA256
+	* \param Checksum     The checksum.
+	* \param ChecksumLen  The length of the checksum.
+	* \param Souce        The embedded source.
+	* \param SourceLen    The length of the source.
+	*/
+	DIBuilderCreateFileWithChecksum :: proc(Builder: DIBuilderRef, Filename: cstring, FilenameLen: c.size_t, Directory: cstring, DirectoryLen: c.size_t, ChecksumKind: ChecksumKind, Checksum: cstring, ChecksumLen: c.size_t, Source: cstring, SourceLen: c.size_t) -> MetadataRef ---
 
 	/**
 	* Creates a new descriptor for a module with the specified parent scope.
