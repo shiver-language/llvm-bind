@@ -14,7 +14,6 @@
 \*===----------------------------------------------------------------------===*/
 package llvm
 
-import "core:sys/posix"
 import "core:c"
 
 foreign import lib "llvm-install/lib/LLVM-C.lib"
@@ -24,6 +23,8 @@ foreign import lib "llvm-install/lib/LLVM-C.lib"
 at least make sure the type is the same size.  The implementation side will
 use C++ bool. */
 lto_bool_t :: u8
+
+posix_off_t :: distinct i64
 
 /**
 * @defgroup LLVMCLTO LTO
@@ -204,7 +205,7 @@ foreign lib {
 	*
 	* \since LTO_API_VERSION=5
 	*/
-	lto_module_create_from_fd_at_offset :: proc(fd: i32, path: cstring, file_size: c.size_t, map_size: c.size_t, offset: posix.off_t) -> lto_module_t ---
+	lto_module_create_from_fd_at_offset :: proc(fd: i32, path: cstring, file_size: c.size_t, map_size: c.size_t, offset: posix_off_t) -> lto_module_t ---
 
 	/**
 	* Frees all memory internally allocated by the module.
