@@ -11,7 +11,7 @@ If you use these bindings on Linux, remember to pass in `-extra-linker-flags`. I
 (Gentoo Linux), the command looks like so:
 ```bash
 # change the path depending on the location of your LLVM installation
-odin build . -extra-linker-flags="-L/usr/lib/llvm/21/lib64"
+odin build . -extra-linker-flags="-L/usr/lib/llvm/22/lib64"
 ```
 
 ## Windows Special Instructions
